@@ -47,6 +47,9 @@ where
                        , options :: Map Key Value
                        }
 
+    instance Show Configuration where
+        show c = show $ options c
+
     homeDirectoryPath :: IO String
     homeDirectoryPath = do
         homeDir <- getHomeDirectory
