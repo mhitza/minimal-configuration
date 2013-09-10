@@ -101,6 +101,12 @@ where
     saveConfiguration (Configuration { filepath=f, options=o }) = TConfig.writeConfig f o
 
 
+    newC :: Configuration -> Bool
+    newC = new 
+
+    emptyC :: Configuration -> Bool
+    emptyC = Data.Map.null . options
+
     hasV :: Configuration -> Key -> Bool
     hasV configuration key = isJust . TConfig.getValue key $ options configuration
 
