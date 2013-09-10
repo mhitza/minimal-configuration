@@ -1,6 +1,9 @@
 {-# LANGUAGE ImplicitParams, RankNTypes #-}
 module System.Config.File
     ( Configuration(..)
+    , acceptAnything
+    , acceptNonBlank
+    , fillInteractively
     , withConfiguration
     , withConfigurationImplicit
     , saveConfiguration
@@ -41,6 +44,14 @@ where
         unless fileFound $ writeFile filepath' ""
         config <- TConfig.readConfig filepath'
         return Configuration { new=not fileFound, filepath=filepath', options=config }
+
+
+    acceptAnything :: InteractiveValidator
+    acceptAnything = return . Right 
+
+    acceptNonBlank :: InteractiveValidator
+    acceptNonBlank value | Prelude.null value = return $ Left "Empty string is not accepted"
+                         | otherwise          = return $ Right value
 
 
     fillInteractively :: Configuration -> [(Key, InteractiveValidator)] -> IO Configuration
