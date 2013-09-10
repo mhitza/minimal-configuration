@@ -23,7 +23,7 @@ description:
     >                  Nothing -> do conf' <- fillInteractively conf [("name", acceptNonBlank)]
     >                                saveConfiguration conf'
 
-license:             Apache-2.0
+license:             OtherLicense
 license-file:        LICENSE
 author:              Marius Ghita
 maintainer:          mhitza@gmail.com
