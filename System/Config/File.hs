@@ -1,6 +1,8 @@
+{-# LANGUAGE ImplicitParams, RankNTypes #-}
 module System.Config.File
     ( Configuration(..)
     , withConfiguration
+    , withConfigurationImplicit
     , saveConfiguration
     , hasValue
     , getValue
@@ -42,6 +44,10 @@ where
         homeDir <- homeDirectoryPath
         configuration <- readOrCreateAndRead $ homeDir ++ filename
         f configuration
+
+
+    withConfigurationImplicit :: String -> ((?configuration :: Configuration) => IO b) -> IO b
+    withConfigurationImplicit filename f = withConfiguration filename (\c -> let ?configuration = c in f)
 
 
     saveConfiguration :: Configuration -> IO ()
