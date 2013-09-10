@@ -4,6 +4,7 @@ module System.Config.File
     , acceptAnything
     , acceptNonBlank
     , fillInteractively
+    , fillInteractivelyWhen
     , withConfiguration
     , withConfigurationImplicit
     , saveConfiguration
@@ -20,6 +21,7 @@ where
     import Control.Monad
     import Data.Map
     import Data.Maybe
+    import System.IO
 
 
     type Key                  = String
@@ -54,6 +56,10 @@ where
                          | otherwise          = return $ Right value
 
 
+    fillInteractivelyWhen :: (Configuration -> Bool) -> Configuration -> [(Key, InteractiveValidator)] -> IO Configuration
+    fillInteractivelyWhen pred configuration methods | pred configuration = fillInteractively configuration methods
+                                                     | otherwise          = return configuration
+
     fillInteractively :: Configuration -> [(Key, InteractiveValidator)] -> IO Configuration
     fillInteractively configuration methods = interactiveBuild >>= (return . Prelude.foldl (\c (key,value) -> setOrReplace key value c) configuration) where
         interactiveBuild = forM methods (uncurry requestLoop)
@@ -61,6 +67,7 @@ where
                                  | otherwise                  = addValue c key value
         requestLoop key validator = do
             putStr (key ++ ": ")
+            hFlush stdout
             input <- getLine >>= validator
             case input of (Right v) -> return (key, v)
                           (Left v)  -> putStrLn v >> requestLoop key validator
