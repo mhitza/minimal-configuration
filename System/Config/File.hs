@@ -104,7 +104,7 @@ where
     -- | Request user input for the set of (Key, InteractiveValidator). For keys that are
     -- already set in the 'Configuration', values will be overwritten
     fillInteractively :: Configuration -> [(Key, InteractiveValidator)] -> IO Configuration
-    fillInteractively configuration methods = interactiveBuild >>= (return . Prelude.foldl (\c (key,value) -> setOrReplace key value c) configuration) where
+    fillInteractively configuration methods = liftM (Prelude.foldl (\c (key,value) -> setOrReplace key value c) configuration) interactiveBuild where
         interactiveBuild = forM methods (uncurry requestLoop)
         setOrReplace key value c | hasV configuration key = replaceV c key value
                                  | otherwise              = addV c key value
@@ -139,8 +139,7 @@ where
                       -> IO Configuration
     loadConfiguration filename = do
         homeDir <- homeDirectoryPath
-        configuration <- readOrCreateAndRead $ homeDir ++ filename
-        return configuration
+        readOrCreateAndRead $ homeDir ++ filename
 
 
     -- | The configuration will be saved into the same file it was read from, obviously
