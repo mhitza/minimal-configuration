@@ -19,6 +19,10 @@ where
     import Data.Maybe
 
 
+    type Key                  = String
+    type Value                = String
+    type InteractiveValidator = Value -> IO (Either String Value)
+
     data Configuration = Configuration 
                        { new :: Bool
                        , filepath :: FilePath
@@ -39,6 +43,18 @@ where
         return Configuration { new=not fileFound, filepath=filepath', options=config }
 
 
+    fillInteractively :: Configuration -> [(Key, InteractiveValidator)] -> IO Configuration
+    fillInteractively configuration methods = interactiveBuild >>= (return . Prelude.foldl (\c (key,value) -> setOrReplace key value c) configuration) where
+        interactiveBuild = forM methods (uncurry requestLoop)
+        setOrReplace key value c | hasValue key configuration = replaceValue c key value
+                                 | otherwise                  = addValue c key value
+        requestLoop key validator = do
+            putStr (key ++ ": ")
+            input <- getLine >>= validator
+            case input of (Right v) -> return (key, v)
+                          (Left v)  -> putStrLn v >> requestLoop key validator
+
+
     withConfiguration :: String -> (Configuration -> IO b) -> IO b
     withConfiguration filename f = do
         homeDir <- homeDirectoryPath
@@ -54,17 +70,17 @@ where
     saveConfiguration (Configuration { filepath=f, options=o }) = TConfig.writeConfig f o
 
 
-    hasValue :: String -> Configuration -> Bool
+    hasValue :: Key -> Configuration -> Bool
     hasValue key = isJust . TConfig.getValue key . options
 
-    getValue :: String -> Configuration -> Maybe String
+    getValue :: Key -> Configuration -> Maybe Value
     getValue key = TConfig.getValue key . options
 
-    addValue :: Configuration -> String -> String -> Configuration
+    addValue :: Configuration -> Key -> Value -> Configuration
     addValue configuration key value = (\o -> configuration { options=o }) . TConfig.addKey key value $ options configuration
 
-    removeValue :: Configuration -> String -> Configuration
+    removeValue :: Configuration -> Key -> Configuration
     removeValue configuration key = (\o -> configuration { options=o }) . TConfig.remKey key $ options configuration
 
-    replaceValue :: Configuration -> String -> String -> Configuration
+    replaceValue :: Configuration -> Key -> Value -> Configuration
     replaceValue configuration key value = (\o -> configuration { options=o }) . TConfig.repConfig key value $ options configuration
