@@ -15,10 +15,10 @@ module System.Config.File
     , withConfigurationImplicit
     , saveConfiguration
     -- * Working with the options
-    , hasValue
-    , getValue
-    , removeValue
-    , replaceValue
+    , hasV
+    , getV
+    , removeV
+    , replaceV
     -- * Interactive configuration building
     , acceptAnything
     , acceptNonBlank
@@ -76,8 +76,8 @@ where
     fillInteractively :: Configuration -> [(Key, InteractiveValidator)] -> IO Configuration
     fillInteractively configuration methods = interactiveBuild >>= (return . Prelude.foldl (\c (key,value) -> setOrReplace key value c) configuration) where
         interactiveBuild = forM methods (uncurry requestLoop)
-        setOrReplace key value c | hasValue key configuration = replaceValue c key value
-                                 | otherwise                  = addValue c key value
+        setOrReplace key value c | hasV configuration key = replaceV c key value
+                                 | otherwise              = addV c key value
         requestLoop key validator = do
             putStr (key ++ ": ")
             hFlush stdout
@@ -101,17 +101,17 @@ where
     saveConfiguration (Configuration { filepath=f, options=o }) = TConfig.writeConfig f o
 
 
-    hasValue :: Key -> Configuration -> Bool
-    hasValue key = isJust . TConfig.getValue key . options
+    hasV :: Configuration -> Key -> Bool
+    hasV configuration key = isJust . TConfig.getValue key $ options configuration
 
-    getValue :: Key -> Configuration -> Maybe Value
-    getValue key = TConfig.getValue key . options
+    getV :: Configuration -> Key -> Maybe Value
+    getV configuration key = TConfig.getValue key $ options configuration
 
-    addValue :: Configuration -> Key -> Value -> Configuration
-    addValue configuration key value = (\o -> configuration { options=o }) . TConfig.addKey key value $ options configuration
+    addV :: Configuration -> Key -> Value -> Configuration
+    addV configuration key value = (\o -> configuration { options=o }) . TConfig.addKey key value $ options configuration
 
-    removeValue :: Configuration -> Key -> Configuration
-    removeValue configuration key = (\o -> configuration { options=o }) . TConfig.remKey key $ options configuration
+    removeV :: Configuration -> Key -> Configuration
+    removeV configuration key = (\o -> configuration { options=o }) . TConfig.remKey key $ options configuration
 
-    replaceValue :: Configuration -> Key -> Value -> Configuration
-    replaceValue configuration key value = (\o -> configuration { options=o }) . TConfig.repConfig key value $ options configuration
+    replaceV :: Configuration -> Key -> Value -> Configuration
+    replaceV configuration key value = (\o -> configuration { options=o }) . TConfig.repConfig key value $ options configuration
