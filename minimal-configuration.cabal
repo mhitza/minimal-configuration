@@ -28,7 +28,7 @@ license-file:        LICENSE
 author:              Marius Ghita
 maintainer:          mhitza@gmail.com
 -- copyright:           
-category:            System
+category:            System, Configuration
 build-type:          Simple
 cabal-version:       >=1.10
 
