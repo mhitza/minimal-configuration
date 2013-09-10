@@ -97,8 +97,8 @@ where
 
     -- | Execution dependent on a predicate
     fillInteractivelyWhen :: (Configuration -> Bool) -> Configuration -> [(Key, InteractiveValidator)] -> IO Configuration
-    fillInteractivelyWhen pred configuration methods | pred configuration = fillInteractively configuration methods
-                                                     | otherwise          = return configuration
+    fillInteractivelyWhen predi configuration methods | predi configuration = fillInteractively configuration methods
+                                                      | otherwise           = return configuration
 
 
     -- | Request user input for the set of (Key, InteractiveValidator). For keys that are
