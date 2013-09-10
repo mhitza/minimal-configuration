@@ -1,5 +1,5 @@
 This package provides the basic tools to manage configuration files that hold information
-in the format of key - value pairs. Everything value is of string type.
+in the format of key - value pairs. Every value is of type string.
 
 The package is on hackage so it suffices to run:
 
