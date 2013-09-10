@@ -1,17 +1,30 @@
 {-# LANGUAGE ImplicitParams, RankNTypes #-}
+{- |
+Stability   :  unstable
+Portability :  non-portable
+
+module description starting at first column
+-}
 module System.Config.File
-    ( Configuration(..)
+    ( Key
+    , Value
+    , InteractiveValidator
+    , Configuration()
+    -- * Configuration interaction
+    , withConfiguration
+    , withConfigurationImplicit
+    , saveConfiguration
+    -- * Working with the options
+    , hasValue
+    , getValue
+    , removeValue
+    , replaceValue
+    -- * Interactive configuration building
     , acceptAnything
     , acceptNonBlank
     , fillInteractively
     , fillInteractivelyWhen
-    , withConfiguration
-    , withConfigurationImplicit
-    , saveConfiguration
-    , hasValue
-    , getValue
-    , removeValue
-    , replaceValue )
+    )
 where
 
     import System.FilePath
@@ -24,14 +37,14 @@ where
     import System.IO
 
 
-    type Key                  = String
+    type Key                  = String 
     type Value                = String
     type InteractiveValidator = Value -> IO (Either String Value)
 
     data Configuration = Configuration 
                        { new :: Bool
                        , filepath :: FilePath
-                       , options :: Map String String
+                       , options :: Map Key Value
                        }
 
     homeDirectoryPath :: IO String
