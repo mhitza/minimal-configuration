@@ -32,7 +32,12 @@ category:            System
 build-type:          Simple
 cabal-version:       >=1.10
 
+source-repository head
+  type:              git
+  location:          https://github.com/mhitza/minimal-configuration
+
 library
+  ghc-options:         -Wall
   exposed-modules:     System.Config.File
   build-depends:       base ==4.*, directory, filepath, tconfig, containers
   default-language:    Haskell98
