@@ -12,13 +12,9 @@ maintainer:          mhitza@gmail.com
 -- copyright:           
 category:            System
 build-type:          Simple
--- extra-source-files:  
 cabal-version:       >=1.10
 
 library
   exposed-modules:     System.Config.File
-  -- other-modules:       
-  other-extensions:    ImplicitParams, RankNTypes
   build-depends:       base ==4.*, directory, filepath, tconfig, containers
-  -- hs-source-dirs:      
   default-language:    Haskell98

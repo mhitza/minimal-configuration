@@ -14,32 +14,41 @@ greeting; alternatively request that information from the user and save the new 
 > main = withConfiguration ".apprc" $ \conf -> do
 >     let name = getV conf "name"
 >     case name of Just n  -> putStrLn $ "hello " ++ n
->                  Nothing -> conf' <- fillInteractively conf [("name", acceptNonBlank)]
->                             saveConfiguration conf'
+>                  Nothing -> do conf' <- fillInteractively conf [("name", acceptNonBlank)]
+>                                saveConfiguration conf'
 -}
 module System.Config.File (
-    -- * Types
+    -- * Basics
+    -- ** Types
       Key 
     , Value
-    , InteractiveValidator
     , Configuration()
-    -- * Configuration interaction
+    -- ** Managing
     , withConfiguration
     , loadConfiguration
     , saveConfiguration
-    -- * Working with the options
-    , newC
-    , emptyC
-    -- * Accessors/mutators
+    -- ** CRUD
     , hasV
     , getV
     , removeV
     , replaceV
-    -- * Interactive configuration building
-    , acceptAnything
+    -- * Data \"entry\"
+    -- 
+    -- | It proved useful that for a few small cases to also have a way to \"build\"
+    -- the configuration interactively. When you consider easy to validate fields
+    -- (that don't depend on other fields), it seems to be worth to have this functionality
+    -- included.
+    
+    -- ** Validation
+    , InteractiveValidator
     , acceptNonBlank
+    , acceptAnything
+    -- ** Execution
     , fillInteractively
     , fillInteractivelyWhen
+    -- ** Predicates
+    , newC
+    , emptyC
     )
 where
 
@@ -91,15 +100,20 @@ where
     acceptAnything :: InteractiveValidator
     acceptAnything = return . Right 
 
+
     acceptNonBlank :: InteractiveValidator
     acceptNonBlank value | Prelude.null value = return $ Left "Empty string is not accepted"
                          | otherwise          = return $ Right value
 
 
+    -- | Execution dependent on a predicate
     fillInteractivelyWhen :: (Configuration -> Bool) -> Configuration -> [(Key, InteractiveValidator)] -> IO Configuration
     fillInteractivelyWhen pred configuration methods | pred configuration = fillInteractively configuration methods
                                                      | otherwise          = return configuration
 
+
+    -- | Request user input for the set of (Key, InteractiveValidator). For keys that are
+    -- already set in the 'Configuration', values will be overwritten
     fillInteractively :: Configuration -> [(Key, InteractiveValidator)] -> IO Configuration
     fillInteractively configuration methods = interactiveBuild >>= (return . Prelude.foldl (\c (key,value) -> setOrReplace key value c) configuration) where
         interactiveBuild = forM methods (uncurry requestLoop)
