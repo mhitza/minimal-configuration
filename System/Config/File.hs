@@ -25,6 +25,7 @@ module System.Config.File (
     , Configuration()
     -- * Configuration interaction
     , withConfiguration
+    , loadConfiguration
     , saveConfiguration
     -- * Working with the options
     , newC
@@ -115,10 +116,7 @@ where
     withConfiguration :: String -- ^Configuration file name
                       -> (Configuration -> IO b)
                       -> IO b
-    withConfiguration filename f = do
-        homeDir <- homeDirectoryPath
-        configuration <- readOrCreateAndRead $ homeDir ++ filename
-        f configuration
+    withConfiguration filename f = loadConfiguration filename >>= \c -> f c
     -- ^However if you like to stack software ala @ withSocketsDo $ withX $ withY @ this might not 
     -- be your preferred approach. You could go with the following approach, which was excluded for
     -- library portability:
@@ -132,6 +130,14 @@ where
     -- > main = withConfigurationImplicit ".apprc" $ do
     -- >    print $ hasV "name" ?configuration
     -- >    print $ getV "name" ?configuration
+
+
+    loadConfiguration :: String -- ^ Configuration file name
+                      -> IO Configuration
+    loadConfiguration filename = do
+        homeDir <- homeDirectoryPath
+        configuration <- readOrCreateAndRead $ homeDir ++ filename
+        return configuration
 
 
     -- | The configuration will be saved into the same file it was read from, obviously
