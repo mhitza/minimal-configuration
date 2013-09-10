@@ -5,17 +5,6 @@ Portability :  portable
 IMPORTANT NOTE: this module works with the user's home directory, and that is the place where
 the configuration will be read from and persisted.
 
-Before even taking on the reference, consider the following example. Four things are
-done here: load configuration stored in /.apprc/, get the /name/ value and print a
-greeting; alternatively request that information from the user and save the new configuration.
-
-> import System.Config.File
->
-> main = withConfiguration ".apprc" $ \conf -> do
->     let name = getV conf "name"
->     case name of Just n  -> putStrLn $ "hello " ++ n
->                  Nothing -> do conf' <- fillInteractively conf [("name", acceptNonBlank)]
->                                saveConfiguration conf'
 -}
 module System.Config.File (
     -- * Basics
