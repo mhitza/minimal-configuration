@@ -39,5 +39,5 @@ source-repository head
 library
   ghc-options:         -Wall
   exposed-modules:     System.Config.File
-  build-depends:       base ==4.*, directory, filepath, tconfig, containers
+  build-depends:       base >=4.5 && <=4.8, directory <= 1.2.1.0, filepath <= 1.3.0.2, tconfig == 0.5.2, containers <= 0.5.6
   default-language:    Haskell98
