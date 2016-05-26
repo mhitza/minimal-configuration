@@ -1,10 +1,6 @@
 {- |
 Stability   :  unstable
 Portability :  portable
-
-IMPORTANT NOTE: this module works with the user's home directory, and that is the place where
-the configuration will be read from and persisted.
-
 -}
 module System.Config.File (
     -- * Basics
@@ -16,6 +12,8 @@ module System.Config.File (
     , withConfiguration
     , loadConfiguration
     , saveConfiguration
+    , loadGlobal
+    , loadLocal
     -- ** CRUD
     , hasV
     , getV
@@ -116,6 +114,7 @@ where
                           (Left v)  -> putStrLn v >> requestLoop key validator
 
 
+    {-# DEPRECATED withConfiguration, loadConfiguration "Use loadLocal/loadGlobal instead" #-}
     withConfiguration :: String -- ^Configuration file name
                       -> (Configuration -> IO b)
                       -> IO b
@@ -140,6 +139,22 @@ where
     loadConfiguration filename = do
         homeDir <- homeDirectoryPath
         readOrCreateAndRead $ homeDir ++ filename
+
+
+    loadGlobal :: FilePath
+               -> IO Configuration
+    loadGlobal filename = do
+        homeDir <- homeDirectoryPath
+        readOrCreateAndRead $ homeDir ++ filename
+    -- The configuration file name given is relative to the users home directory
+
+
+    loadLocal :: FilePath
+              -> IO Configuration
+    loadLocal filename = do
+      currentDirectory <- getCurrentDirectory
+      readOrCreateAndRead $ currentDirectory </> filename
+    -- Load configuration file relative to the current directory
 
 
     -- | The configuration will be saved into the same file it was read from, obviously

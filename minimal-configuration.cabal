@@ -17,7 +17,7 @@ description:
     .
     > import System.Config.File
     >
-    > main = withConfiguration ".apprc" $ \conf -> do
+    > main = loadLocal ".apprc" >>= \conf -> do
     >     let name = getV conf "name"
     >     case name of Just n  -> putStrLn $ "hello " ++ n
     >                  Nothing -> do conf' <- fillInteractively conf [("name", acceptNonBlank)]
