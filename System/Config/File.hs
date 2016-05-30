@@ -3,18 +3,18 @@ Stability   :  unstable
 Portability :  portable
 -}
 module System.Config.File (
-    -- * Basics
-    -- ** Types
-      Key 
+    -- * Type aliases
+      Section
+    , Key
     , Value
     , Configuration()
-    -- ** Managing
+    -- * Managing
     , save
     , loadGlobal
     , loadLocal
-    -- ** CRUD
-    , set
+    -- * CRUD
     , has
+    , set
     , get
     , delete
     , replace
@@ -122,5 +122,6 @@ where
     delete section key configuration = wrap configuration . HashMap.adjust (HashMap.delete key) section $ unwrap configuration
 
 
+    -- | In the absence of the given section/key the configuration will not be changed
     replace :: Section -> Key -> Value -> Configuration -> Configuration
     replace section key value configuration = wrap configuration $ HashMap.adjust (HashMap.adjust (const value) key) section $ unwrap configuration
