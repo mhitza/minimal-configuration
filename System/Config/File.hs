@@ -32,11 +32,11 @@ module System.Config.File (
     )
 where
 
-    import System.FilePath
-    import System.Directory
+    import System.FilePath ((</>))
+    import System.Directory (doesFileExist, getHomeDirectory, getCurrentDirectory)
 
-    import Control.Monad
-    import Data.Maybe
+    import Control.Monad (join)
+    import Data.Maybe (isJust)
 
     import Data.Text (Text)
     import Data.Ini (Ini(..), unIni, WriteIniSettings(..), KeySeparator(..))
