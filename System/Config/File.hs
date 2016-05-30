@@ -13,11 +13,11 @@ module System.Config.File (
     , loadGlobal
     , loadLocal
     -- ** CRUD
-    , addV
-    , hasV
-    , getV
-    , removeV
-    , replaceV
+    , set
+    , has
+    , get
+    , delete
+    , replace
     -- * Data \"entry\"
     -- 
     -- | It proved useful that for a few small cases to also have a way to \"build\"
@@ -105,21 +105,21 @@ where
     wrap configuration  = \o -> configuration { options=(Ini o) }
 
 
-    hasV :: Key -> Configuration -> Key -> Bool
-    hasV section configuration key = isJust (getV section configuration key)
+    has :: Key -> Configuration -> Key -> Bool
+    has section configuration key = isJust (get section configuration key)
 
 
-    getV :: Key -> Configuration -> Key -> Maybe Value
-    getV section configuration key = join . fmap (HashMap.lookup key) . HashMap.lookup section $ unwrap configuration
+    get :: Key -> Configuration -> Key -> Maybe Value
+    get section configuration key = join . fmap (HashMap.lookup key) . HashMap.lookup section $ unwrap configuration
 
 
-    addV :: Key -> Configuration -> Key -> Value -> Configuration
-    addV section configuration key value = wrap configuration . HashMap.adjust (HashMap.insert key value) section $ unwrap configuration
+    set :: Key -> Configuration -> Key -> Value -> Configuration
+    set section configuration key value = wrap configuration . HashMap.adjust (HashMap.insert key value) section $ unwrap configuration
 
 
-    removeV :: Key -> Configuration -> Key -> Configuration
-    removeV section configuration key = wrap configuration . HashMap.adjust (HashMap.delete key) section $ unwrap configuration
+    delete :: Key -> Configuration -> Key -> Configuration
+    delete section configuration key = wrap configuration . HashMap.adjust (HashMap.delete key) section $ unwrap configuration
 
 
-    replaceV :: Key -> Configuration -> Key -> Value -> Configuration
-    replaceV section configuration key value = wrap configuration $ HashMap.adjust (HashMap.adjust (const value) key) section $ unwrap configuration
+    replace :: Key -> Configuration -> Key -> Value -> Configuration
+    replace section configuration key value = wrap configuration $ HashMap.adjust (HashMap.adjust (const value) key) section $ unwrap configuration
