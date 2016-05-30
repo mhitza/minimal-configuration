@@ -106,21 +106,21 @@ where
     wrap configuration  = \o -> configuration { options=(Ini o) }
 
 
-    has :: Section -> Configuration -> Key -> Bool
-    has section configuration key = isJust (get section configuration key)
+    has :: Section -> Key -> Configuration -> Bool
+    has section key = isJust . get section key
 
 
-    get :: Section -> Configuration -> Key -> Maybe Value
-    get section configuration key = join . fmap (HashMap.lookup key) . HashMap.lookup section $ unwrap configuration
+    get :: Section -> Key -> Configuration -> Maybe Value
+    get section key configuration = join . fmap (HashMap.lookup key) . HashMap.lookup section $ unwrap configuration
 
 
-    set :: Section -> Configuration -> Key -> Value -> Configuration
-    set section configuration key value = wrap configuration . HashMap.adjust (HashMap.insert key value) section $ unwrap configuration
+    set :: Section -> Key -> Value -> Configuration -> Configuration
+    set section key value configuration = wrap configuration . HashMap.adjust (HashMap.insert key value) section $ unwrap configuration
 
 
-    delete :: Section -> Configuration -> Key -> Configuration
-    delete section configuration key = wrap configuration . HashMap.adjust (HashMap.delete key) section $ unwrap configuration
+    delete :: Section -> Key -> Configuration -> Configuration
+    delete section key configuration = wrap configuration . HashMap.adjust (HashMap.delete key) section $ unwrap configuration
 
 
-    replace :: Section -> Configuration -> Key -> Value -> Configuration
-    replace section configuration key value = wrap configuration $ HashMap.adjust (HashMap.adjust (const value) key) section $ unwrap configuration
+    replace :: Section -> Key -> Value -> Configuration -> Configuration
+    replace section key value configuration = wrap configuration $ HashMap.adjust (HashMap.adjust (const value) key) section $ unwrap configuration
