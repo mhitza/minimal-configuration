@@ -46,8 +46,9 @@ where
     import Data.Bool (bool)
 
 
-    type Key   = Text
-    type Value = Text
+    type Section = Text
+    type Key     = Text
+    type Value   = Text
 
 
     -- |While the internal representation is not exposed directly, an implementation
@@ -105,21 +106,21 @@ where
     wrap configuration  = \o -> configuration { options=(Ini o) }
 
 
-    has :: Key -> Configuration -> Key -> Bool
+    has :: Section -> Configuration -> Key -> Bool
     has section configuration key = isJust (get section configuration key)
 
 
-    get :: Key -> Configuration -> Key -> Maybe Value
+    get :: Section -> Configuration -> Key -> Maybe Value
     get section configuration key = join . fmap (HashMap.lookup key) . HashMap.lookup section $ unwrap configuration
 
 
-    set :: Key -> Configuration -> Key -> Value -> Configuration
+    set :: Section -> Configuration -> Key -> Value -> Configuration
     set section configuration key value = wrap configuration . HashMap.adjust (HashMap.insert key value) section $ unwrap configuration
 
 
-    delete :: Key -> Configuration -> Key -> Configuration
+    delete :: Section -> Configuration -> Key -> Configuration
     delete section configuration key = wrap configuration . HashMap.adjust (HashMap.delete key) section $ unwrap configuration
 
 
-    replace :: Key -> Configuration -> Key -> Value -> Configuration
+    replace :: Section -> Configuration -> Key -> Value -> Configuration
     replace section configuration key value = wrap configuration $ HashMap.adjust (HashMap.adjust (const value) key) section $ unwrap configuration
