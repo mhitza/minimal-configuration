@@ -39,7 +39,7 @@ where
     import Data.Maybe
 
     import Data.Text (Text)
-    import Data.Ini (Ini, unIni, WriteIniSettings(..), KeySeparator(..))
+    import Data.Ini (Ini(..), unIni, WriteIniSettings(..), KeySeparator(..))
     import qualified Data.Ini as Ini
     import qualified Data.HashMap.Strict as HashMap
 
@@ -101,7 +101,7 @@ where
     unwrap = unIni . options
 
     wrap :: Configuration -> HashMap.HashMap Text (HashMap.HashMap Text Text) -> Configuration
-    wrap configuration  = \o -> configuration { options=(Ini.Ini o) }  
+    wrap configuration  = \o -> configuration { options=(Ini o) }
 
 
     hasV :: Key -> Configuration -> Key -> Bool
