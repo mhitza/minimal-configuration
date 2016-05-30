@@ -3,6 +3,10 @@ Stability   :  unstable
 Portability :  portable
 -}
 module System.Config.Types
+  ( Section
+  , Key
+  , Value
+  , Configuration(..) )
 where
 
     import Data.Text (Text)

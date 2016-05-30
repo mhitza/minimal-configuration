@@ -3,7 +3,7 @@ Stability   :  unstable
 Portability :  portable
 -}
 module System.Config.File (
-    -- * Type aliases
+    -- * Types
       Section
     , Key
     , Value
@@ -35,13 +35,12 @@ where
 
     import Control.Monad (join)
     import Data.Maybe (isJust)
+    import System.Directory (getHomeDirectory, getCurrentDirectory)
 
     import Data.Text (Text)
     import Data.Ini (Ini(..), unIni, WriteIniSettings(..), KeySeparator(..))
     import qualified Data.Ini as Ini
     import qualified Data.HashMap.Strict as HashMap
-
-    import System.Directory (getHomeDirectory, getCurrentDirectory)
 
     import System.Config.Types
     import System.Config.File.Internal

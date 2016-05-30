@@ -3,6 +3,8 @@ Stability   :  unstable
 Portability :  portable
 -}
 module System.Config.File.Internal
+    ( Configuration(..)
+    , readOrCreateAndRead )
 where
 
     import System.Config.Types
