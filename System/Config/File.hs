@@ -43,6 +43,8 @@ where
     import qualified Data.Ini as Ini
     import qualified Data.HashMap.Strict as HashMap
 
+    import Data.Bool (bool)
+
 
     type Key   = Text
     type Value = Text
@@ -66,8 +68,7 @@ where
     readOrCreateAndRead filepath_provider filename = do
         file <- fmap (</> filename) filepath_provider
         fileFound <- doesFileExist file
-        unless fileFound $ writeFile file ""
-        config <- Ini.readIniFile file
+        config <- bool (return . Right $ Ini HashMap.empty) (Ini.readIniFile file) fileFound
         case config of (Left s)  -> return $ Left s
                        (Right i) -> return . Right $ Configuration { new=not fileFound, filepath=file, options=i }
 
