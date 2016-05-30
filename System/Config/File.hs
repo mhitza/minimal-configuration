@@ -9,7 +9,7 @@ module System.Config.File (
     , Value
     , Configuration()
     -- ** Managing
-    , saveConfiguration
+    , save
     , loadGlobal
     , loadLocal
     -- ** CRUD
@@ -84,8 +84,8 @@ where
 
 
     -- | The configuration will be saved into the same file it was read from, obviously
-    saveConfiguration :: Configuration -> IO ()
-    saveConfiguration (Configuration { filepath=f, options=o }) = Ini.writeIniFileWith settings f o
+    save :: Configuration -> IO ()
+    save (Configuration { filepath=f, options=o }) = Ini.writeIniFileWith settings f o
       where settings = WriteIniSettings { writeIniKeySeparator=EqualsKeySeparator }
 
 
