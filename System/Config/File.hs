@@ -62,34 +62,23 @@ where
         show c = show $ options c
 
 
-    homeDirectoryPath :: IO String
-    homeDirectoryPath = do
-        homeDir <- getHomeDirectory
-        return $ homeDir ++ [pathSeparator]
-
-
-    readOrCreateAndRead :: FilePath -> IO (Either String Configuration)
-    readOrCreateAndRead filepath' = do
-        fileFound <- doesFileExist filepath'
-        unless fileFound $ writeFile filepath' ""
-        config <- Ini.readIniFile filepath'
+    readOrCreateAndRead :: IO FilePath -> FilePath -> IO (Either String Configuration)
+    readOrCreateAndRead filepath_provider filename = do
+        file <- fmap (</> filename) filepath_provider
+        fileFound <- doesFileExist file
+        unless fileFound $ writeFile file ""
+        config <- Ini.readIniFile file
         case config of (Left s)  -> return $ Left s
-                       (Right i) -> return . Right $ Configuration { new=not fileFound, filepath=filepath', options=i }
+                       (Right i) -> return . Right $ Configuration { new=not fileFound, filepath=file, options=i }
 
 
-    loadGlobal :: FilePath
-               -> IO (Either String Configuration)
-    loadGlobal filename = do
-        homeDir <- homeDirectoryPath
-        readOrCreateAndRead $ homeDir ++ filename
+    loadGlobal :: FilePath -> IO (Either String Configuration)
+    loadGlobal = readOrCreateAndRead getHomeDirectory
     -- The configuration file name given is relative to the users home directory
 
 
-    loadLocal :: FilePath
-              -> IO (Either String Configuration)
-    loadLocal filename = do
-      currentDirectory <- getCurrentDirectory
-      readOrCreateAndRead $ currentDirectory </> filename
+    loadLocal :: FilePath -> IO (Either String Configuration)
+    loadLocal = readOrCreateAndRead getCurrentDirectory
     -- Load configuration file relative to the current directory
 
 
