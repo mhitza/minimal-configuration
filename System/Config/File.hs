@@ -48,6 +48,9 @@ where
     import Data.Maybe
     import System.IO
 
+    import qualified Data.Ini as Ini
+    import qualified Data.HashMap.Strict as HashMap
+
 
     type Key   = String 
     type Value = String
