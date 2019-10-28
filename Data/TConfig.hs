@@ -25,8 +25,6 @@ module Data.TConfig
    , addKey
    ) where
 
-import System.IO
-import Data.List
 import Data.Char
 import qualified Data.Map as M
 
@@ -37,11 +35,6 @@ type Conf  = M.Map Key Value
 -- |Adds a key and value to the end of the configuration.
 addKey :: Key -> Value -> Conf -> Conf
 addKey k v conf = M.insert k (addQuotes v) conf
-
--- |Utility Function. Checks for the existence 
--- of a key.
-checkKey :: Key -> Conf -> Bool
-checkKey k conf = M.member k conf
 
 -- |Utility function.
 -- Removes a key and it's value from the configuration.
@@ -55,6 +48,7 @@ getValue k conf = case M.lookup k conf of
                     Just val -> Just $ stripQuotes val
                     Nothing  -> Nothing
 
+stripQuotes :: String -> String
 stripQuotes x | any isSpace x = filter (/= '\"') x
               | otherwise     = x
 
@@ -102,7 +96,7 @@ parse = words . filter (/= '=')
 -- |Turns a list of key value key value etc... pairs into
 -- A list of Configuration types.
 listConfig :: [String] -> Conf
-listConfig xs = M.fromList $ helper xs
+listConfig = M.fromList . helper
     where helper (x:y:xs) = (x,y) : helper xs
           helper _        = []
 
