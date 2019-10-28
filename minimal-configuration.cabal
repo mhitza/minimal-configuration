@@ -1,5 +1,5 @@
 name:                minimal-configuration
-version:             0.1.3
+version:             0.1.4
 synopsis:            Minimal ini like configuration library with a few extras
 description:         
     The module exported provides the ability to manage a configuration file in
@@ -39,5 +39,6 @@ source-repository head
 library
   ghc-options:         -Wall
   exposed-modules:     System.Config.File
-  build-depends:       base == 4.*, directory == 1.*, filepath == 1.*, tconfig == 0.5.2, containers == 0.*
+  other-modules:       Data.TConfig 
+  build-depends:       base == 4.*, directory == 1.*, filepath == 1.*, containers == 0.*
   default-language:    Haskell98
